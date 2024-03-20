@@ -93,7 +93,35 @@ namespace BankHackathon
 
         public static void logTransaction(String accNo, TransactionType type, Transaction transaction)
         {
-            dbcontext.Transactions.Add()
+
+            if (Accountlogs.ContainsKey(accNo))
+            {
+                if (Accountlogs[accNo].ContainsKey(type))
+                {
+                    Accountlogs[accNo][type].Add(transaction);
+                }
+                else
+                {
+                    List<Transaction> transactionlist = new List<Transaction>() { transaction };
+
+                    Accountlogs[accNo].Add(type, transactionlist);
+                }
+            }
+            else
+            {
+                List<Transaction> transactionlist=new List<Transaction>() { transaction };
+
+                Dictionary<TransactionType, List<Transaction>> mapoftractiontypes = new Dictionary<TransactionType, List<Transaction>>();
+
+                mapoftractiontypes.Add(type, transactionlist);
+
+                Accountlogs.Add(accNo, mapoftractiontypes);
+              
+            }
+
+            dbcontext.Transactions.Add(transaction);
+
+
         }
 
 
