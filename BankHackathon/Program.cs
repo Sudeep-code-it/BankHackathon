@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +21,11 @@ namespace BankHackathon
         Withdraw, Deposit, Transfer, ExternalTransfer
     }
 
+    public enum TransactionStatus
+    {
+        Open, Close
+    }
+
     public class Transaction
     {
         public int transID { get; set; } //from the generator
@@ -30,6 +36,9 @@ namespace BankHackathon
         public double amount {  get; set; } 
 
         public TransactionType type { get; set; }
+
+        public TransactionStatus status { get; set; }
+
 
     }
 
@@ -44,7 +53,7 @@ namespace BankHackathon
        public static Dictionary<string, Dictionary<TransactionType, List<Transaction>>>getTransactions()
         {
             if (Accountlogs.Count == 0)
-                throw new TransactionNotFoundException();
+                throw new TransactionNotFoundException("No Transactions found");
 
             return Accountlogs;
 
@@ -54,10 +63,10 @@ namespace BankHackathon
         public static Dictionary<TransactionType, List<Transaction>> getTransactions(String accNo)
         {
             if (Accountlogs.Count == 0)
-                throw new TransactionNotFoundException();
+                throw new TransactionNotFoundException("No Transactions found");
 
             if (!Accountlogs.ContainsKey(accNo))
-                throw new TransactionNotFoundException();
+                throw new TransactionNotFoundException("No Transactions found with the given account number");
 
             return Accountlogs[accNo];  
 
@@ -66,13 +75,13 @@ namespace BankHackathon
         public static List<Transaction> getTransactions(String accNo, TransactionType type)
         {
             if (Accountlogs.Count == 0)
-                throw new TransactionNotFoundException();
-
-            if (!Enum.IsDefined(typeof(TransactionType), type))
-                throw new InvalidTransactionTypeException();
+                throw new TransactionNotFoundException("No Transactions found");
 
             if (!Accountlogs.ContainsKey(accNo))
-                throw new TransactionNotFoundException();
+                throw new TransactionNotFoundException("No Transactions found with the given account number");
+
+            if (!Enum.IsDefined(typeof(TransactionType), type))
+                throw new InvalidTransactionTypeException("Transaction type is invalid");
 
 
             return Accountlogs[accNo][type];
@@ -82,7 +91,7 @@ namespace BankHackathon
         }
 
 
-        public static void logTransaction(String accNo, TransactionTypes type, Transaction transaction)
+        public static void logTransaction(String accNo, TransactionType type, Transaction transaction)
         {
             dbcontext.Transactions.Add()
         }
@@ -90,4 +99,6 @@ namespace BankHackathon
 
 
     }
+
+   
 }
