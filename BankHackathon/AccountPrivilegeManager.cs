@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace BankHackathon
             }
 
         }
-        double getDailyLimit(PrivilegeType privilegeType)
+        public double getDailyLimit(PrivilegeType privilegeType)
         {
             if (!Enum.IsDefined(typeof(PrivilegeType), privilegeType))
                 throw new InvalidPrivilegeTypeException("Privilege Type is invalid");

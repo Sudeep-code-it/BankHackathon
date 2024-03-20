@@ -13,6 +13,10 @@ namespace BankHackathon
     {
         static void Main(string[] args)
         {
+            AccountPrivilegeManager ap=new AccountPrivilegeManager();
+           double ans= ap.getDailyLimit(PrivilegeType.GOLD);
+            Console.WriteLine(ans);
+
         }
     }
 
@@ -119,7 +123,7 @@ namespace BankHackathon
               
             }
 
-            dbcontext.Transactions.Add(transaction);
+            //dbcontext.Transactions.Add(transaction);
 
 
         }
