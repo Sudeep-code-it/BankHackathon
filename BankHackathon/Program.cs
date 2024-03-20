@@ -44,9 +44,7 @@ namespace BankHackathon
 
     }
 
-    public interface IAccount
-    {
-    }
+
 
     public class TransactionLog
     {
@@ -54,6 +52,12 @@ namespace BankHackathon
 
        public static Dictionary<string, Dictionary<TransactionType, List<Transaction>>>getTransactions()
         {
+            if (Accountlogs == null)
+            {
+                LoadData();
+            }
+
+
             if (Accountlogs.Count == 0)
                 throw new TransactionNotFoundException("No Transactions found");
 
@@ -64,6 +68,12 @@ namespace BankHackathon
 
         public static Dictionary<TransactionType, List<Transaction>> getTransactions(String accNo)
         {
+            if (Accountlogs == null)
+            {
+                LoadData();
+            }
+
+
             if (Accountlogs.Count == 0)
                 throw new TransactionNotFoundException("No Transactions found");
 
@@ -76,6 +86,12 @@ namespace BankHackathon
 
         public static List<Transaction> getTransactions(String accNo, TransactionType type)
         {
+            if (Accountlogs == null)
+            {
+                LoadData();
+            }
+
+
             if (Accountlogs.Count == 0)
                 throw new TransactionNotFoundException("No Transactions found");
 
@@ -95,6 +111,10 @@ namespace BankHackathon
 
         public static void logTransaction(String accNo, TransactionType type, Transaction transaction)
         {
+            if (Accountlogs == null)
+            {
+                LoadData();
+            }
 
             if (Accountlogs.ContainsKey(accNo))
             {
@@ -124,6 +144,41 @@ namespace BankHackathon
             //dbcontext.Transactions.Add(transaction);
 
 
+        }
+
+        private static void LoadData()
+        {
+           
+                BankDbContext db = new BankDbContext();
+
+                var allData = db.Transactions.Select(t => new { t.FromAccount.AccNo, t.TransactionType, t });
+
+                foreach (var item in allData)
+                {
+                    if (!Accountlogs.ContainsKey(item.AccNo))
+                    {
+                        Dictionary<TransactionType, List<Transaction>> dictTrans = new Dictionary<TransactionType, List<Transaction>>();
+                        dictTrans.Add(item.TransactionType, new List<Transaction> { item.t });
+
+                        Accountlogs.Add(item.AccNo, dictTrans);
+
+                    }
+                    else
+                    {
+                        if (!Accountlogs[item.AccNo].ContainsKey(item.TransactionType))
+                        {
+
+                            Accountlogs[item.AccNo].Add(item.TransactionType, new List<Transaction> { item.t });
+
+                        }
+                        else
+                        {
+                            Accountlogs[item.AccNo][item.TransactionType].Add(item.t);
+                        }
+                    }
+                }
+
+            
         }
 
 
